@@ -69,8 +69,8 @@ def helper_result(json):
     면접 결과를 공지하는 채팅 봇
     '''
     room = json.get('room')
-    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H3.name, 'date': isoformat(kstnow())}, room=json.get('room_id'))
-    db.session.add(Chat(room_id=json.get('room_id'), title=json.get('title'), msg=json.get('msg'), user_type=UserType.H3.name))
+    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H3.name, 'date': isoformat(kstnow()), 'result': json['result']}, room=json.get('room_id'))
+    db.session.add(Chat(room_id=json.get('room_id'), title=json.get('title'), msg=json.get('msg'), user_type=UserType.H3.name, result=json['result']))
     # 면접에 불합격인 사람은 룸상태를 "C" 혹은 "N"으로 변경한다.
     if json['result'] == False:
         if json.get('club').is_recruiting():

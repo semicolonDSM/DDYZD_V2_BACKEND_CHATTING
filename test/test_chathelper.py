@@ -30,6 +30,7 @@ def test_helper_schedule(db_setting, flask_websocket, flask_client):
     recv = flask_websocket.get_received(namespace='/chat')[1]
 
     assert recv['name'] == 'recv_chat'
+    assert recv['args'][0]['date'] != None
     assert recv['args'][0]['title'] == '안은결님의 면접 일정'
     assert recv['args'][0]['msg'] != None
 
@@ -41,9 +42,11 @@ def test_helper_result(db_setting, flask_websocket, flask_client):
     recv = flask_websocket.get_received(namespace='/chat')[1]
 
     assert recv['name'] == 'recv_chat'
+    assert recv['args'][0]['date'] != None
     assert recv['args'][0]['title'] == '안은결님 세미콜론 동아리 합격을 축하드립니다!'
     assert recv['args'][0]['msg'] == '안은결님의 세미콜론 동아리 면접결과, 합격을 알려드립니다'
-        
+    assert recv['args'][0]['result'] == True
+
     flask_websocket.emit('helper_result', {'result': True, 'room_token': room_token(user_type='U')}, namespace='/chat')
     recv = flask_websocket.get_received(namespace='/chat')[0]
 
