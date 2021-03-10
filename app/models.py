@@ -288,7 +288,7 @@ class ClubMember(db.Model):
     club_id = db.Column(db.Integer, db.ForeignKey('club.id'))
 
     def __repr__(self):
-        return '<Application> {},{}'.format(User.query.get(self.user_id).name, Club.query.get(self.club_id).name)
+        return '<ClubMember> {},{}'.format(User.query.get(self.user_id).name, Club.query.get(self.club_id).name)
 
 
 class Major(db.Model):
