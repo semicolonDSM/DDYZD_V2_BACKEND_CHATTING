@@ -15,6 +15,7 @@ flask_websocket.on_event('helper_apply', helper_apply, namespace='/chat')
 flask_websocket.on_event('helper_schedule', helper_schedule, namespace='/chat')
 flask_websocket.on_event('helper_result', helper_result, namespace='/chat')
 flask_websocket.on_event('helper_answer', helper_answer, namespace='/chat')
+flask_websocket.on_event('helper_cancel_applicant', helper_cancel_applicant, namespace='/chat')
 
 # websocket event
 flask_websocket.on_event('connect', connect, namespace='/chat')

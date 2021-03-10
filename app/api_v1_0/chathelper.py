@@ -1,4 +1,5 @@
 from app.decorator import schedule_information_required
+from app.decorator import cancel_applicant_required
 from app.decorator import apply_message_required
 from app.decorator import handshake_jwt_required
 from app.decorator import chat_message_required
@@ -137,6 +138,21 @@ def event_send_chat(json):
 def event_leave_room(json):
     leave_room(json.get('room_id'))
     emit('response', {'msg': 'Leave Room Success'}, namespace='/chat')
+
+
+# 지원자 삭제
+@room_token_required
+@cancel_applicant_required
+@room_writed
+@send_alarm
+def helper_cancel_applicant(json):
+    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H4.name, 'date': isoformat(kstnow())}, room=json.get('room_id'))
+    db.session.add(Chat(room_id=json.get('room_id'), room=json.get('title'), msg=json.get('msg'), user_type=UserType.H4.name))
+    if json['club'].is_recruiting():
+        json['room'].status = RoomStatus.N.name
+    else:    
+        json['room'].status = RoomStatus.C.name
+    db.session.commit()
 
 
 # 소켓 연결 끊기
