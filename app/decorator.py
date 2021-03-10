@@ -293,7 +293,7 @@ def answer_required(fn):
 
 
 def get_cancel_applicant_message(user, club):
-    title = "{club} 동아리의 지원이 취소 되었습니다".format(name=club.name)
+    title = "{club} 동아리의 지원이 취소 되었습니다".format(club=club.name)
     msg = "{name}님의 동아리 지원이 취소 되었습니다".format(name=user.name)
 
     return title, msg
@@ -309,7 +309,7 @@ def cancel_applicant_required(fn):
         user = json.get('room').user
         club = json.get('club')
         # 동아리 장이 아닌 경우
-        if json.get('user_type') == 'C':
+        if json.get('user_type') != 'C':
             return emit('error', error.Forbidden('You are not a head for the club'), namespace='/chat')
         # 동아리의 지원자가 아닌 경우
         if not (user.is_applicant(club) or user.is_scheduled(club)):
