@@ -3,10 +3,12 @@ from firebase_admin import messaging
 from firebase_admin import datetime
 from app import logger
 import firebase_admin
+import os
 
 
-cred = credentials.Certificate('ddyzd-firebase-adminsdk.json')
-default_app = firebase_admin.initialize_app(cred)
+if not os.getenv('FLASK_CONFIG') == 'test':
+    cred = credentials.Certificate('ddyzd-firebase-adminsdk.json')
+    default_app = firebase_admin.initialize_app(cred)
 
 
 async def fcm_alarm(sender, msg, token, room_id, user_type):
