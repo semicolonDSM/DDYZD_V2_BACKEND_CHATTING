@@ -8,10 +8,20 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  
 
 jobs:
   build:
-
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      SECRET: ${{ secrets.SECRET }}
+      ROOM_SECRET: ${{ secrets.ROOM_SECRET }}
+      FLASK_CONFIG: ${{ secrets.FLASK_CONFIG }}
+      
+      
     runs-on: ubuntu-latest
     strategy:
       matrix:
