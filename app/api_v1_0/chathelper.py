@@ -107,14 +107,14 @@ def helper_answer(json):
     if json.get('answer'):
         db.session.add(ClubMember(user_id=json.get('user_id'), club_id=json.get('club_id')))
         room.status=RoomStatus.C.name
-        room.update_room_message(json.get('msg'), date, RoomStatus.name)
+        room.update_room_message(json.get('msg'), date)
     else:
         if json.get('club').is_recruiting():
             room.status=RoomStatus.N.name
-            room.update_room_message(json.get('msg'), date, RoomStatus.N.name)
+            room.update_room_message(json.get('msg'), date)
         else:    
             room.status=RoomStatus.C.name
-            room.update_room_message(json.get('msg'), date, RoomStatus.C.name)
+            room.update_room_message(json.get('msg'), date)
     
     db.session.commit()
 
