@@ -25,7 +25,7 @@ def test_helper_apply(db_setting, flask_websocket, flask_client, flask_app):
 def test_helper_schedule(db_setting, flask_websocket, flask_client):
     flask_websocket.emit('join_room', {'room_token': room_token(room_id=2)}, namespace='/chat')
     flask_websocket.emit('helper_schedule', {'date': '2020년 6월 18일 오후 6시 10분', 'location': '3층 그린존','room_token': room_token(room_id=2)}, namespace='/chat')
-    recv = flask_websocket.get_received(namespace='/chat')[2]
+    recv = flask_websocket.get_received(namespace='/chat')[1]
 
     assert recv['name'] == 'recv_chat'
     assert recv['args'][0]['date'] != None
@@ -36,7 +36,7 @@ def test_helper_schedule(db_setting, flask_websocket, flask_client):
 def test_helper_result(db_setting, flask_websocket, flask_client):
     flask_websocket.emit('join_room', {'room_token': room_token(room_id=2)}, namespace='/chat')
     flask_websocket.emit('helper_result', {'result': True, 'room_token': room_token(room_id=2)}, namespace='/chat')
-    recv = flask_websocket.get_received(namespace='/chat')[2]
+    recv = flask_websocket.get_received(namespace='/chat')[1]
 
     assert recv['name'] == 'recv_chat'
     assert recv['args'][0]['date'] != None
@@ -64,7 +64,7 @@ def test_send_chat(db_setting, flask_websocket):
     # 동아리장 채팅
     flask_websocket.emit('join_room', {'room_token': room_token()}, namespace='/chat')
     flask_websocket.emit('send_chat',{'msg': 'Hello \U0001f600', 'room_token': room_token()}, namespace='/chat')
-    recv = flask_websocket.get_received(namespace='/chat')[2]
+    recv = flask_websocket.get_received(namespace='/chat')[1]
 
     assert recv['name'] == 'recv_chat'
     assert recv['args'][0]['msg'] == 'Hello \U0001f600'
@@ -89,7 +89,7 @@ def test_leave_room(flask_websocket, db_setting):
 
 def test_helper_cancel_applicant(db_setting, flask_websocket, flask_client):
     flask_websocket.emit('helper_cancel_applicant', {'room_token': room_token(room_id=3)}, namespace='/chat')
-    recv = flask_websocket.get_received(namespace='/chat')[1]
+    recv = flask_websocket.get_received(namespace='/chat')[0]
 
     assert recv['name'] == 'recv_chat'
     assert recv['args'][0]['date'] != None
