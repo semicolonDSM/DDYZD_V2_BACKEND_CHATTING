@@ -6,9 +6,8 @@ import firebase_admin
 import os
 
 
-if not os.getenv('FLASK_CONFIG') == 'test':
-    cred = credentials.Certificate('ddyzd-firebase-adminsdk.json')
-    default_app = firebase_admin.initialize_app(cred)
+cred = credentials.Certificate('ddyzd-firebase-adminsdk.json')
+default_app = firebase_admin.initialize_app(cred)
 
 
 async def fcm_alarm(sender, msg, token, room_id, user_type):
