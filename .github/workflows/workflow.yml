@@ -52,6 +52,7 @@ jobs:
     
     - name: Setting SDK file
       run: |
+        cat `ls`
         echo $DDYZD_FIREBASE_ADMINSDK >> .ddyzd-firebase-adminsdk.json
         cat `ls`
        
