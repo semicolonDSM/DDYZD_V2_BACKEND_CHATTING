@@ -52,8 +52,8 @@ jobs:
     
     - name: Setting SDK file
       run: |
-        echo env.DDYZD_FIREBASE_ADMINSDK > .ddyzd-firebase-adminsdk.json
-        cat `ls`
+        echo $DDYZD_FIREBASE_ADMINSDK >> .ddyzd-firebase-adminsdk.json
+        cat .ddyzd-firebase-adminsdk.json
        
     - name: Test with pytest
       run: |
