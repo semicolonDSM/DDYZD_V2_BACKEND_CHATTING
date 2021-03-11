@@ -38,10 +38,12 @@ def helper_apply(json):
     동아리 면접에 지원하는 채팅 봇
     '''
     room = json.get('room')
+    date = kstnow()
     major = Major.query.filter_by(club_id=json.get('club_id'), major_name=json.get('major')).first()
-    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H1.name, 'date': isoformat(kstnow())}, room=json.get('room_id'))
+    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H1.name, 'date': isoformat(date)}, room=json.get('room_id'))
     db.session.add(Chat(room_id=json.get('room_id'), title=json.get('title'), msg=json.get('msg'), user_type=UserType.H1.name))
-    room.status = RoomStatus.A.name
+    room.status=RoomStatus.A.name
+    room.update_room_message(json.get('msg'), date)
     db.session.commit()
 
 
@@ -55,9 +57,11 @@ def helper_schedule(json):
     면접 일정을 공지하는 채팅 봇
     '''
     room = json.get('room')
-    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H2.name, 'date': isoformat(kstnow())}, room=json.get('room_id'))
+    date = kstnow()
+    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H2.name, 'date': isoformat(date)}, room=json.get('room_id'))
     db.session.add(Chat(room_id=json.get('room_id'), title=json.get('title'), msg=json.get('msg'), user_type=UserType.H2.name))
-    room.status = RoomStatus.S.name
+    room.status=RoomStatus.S.name
+    room.update_room_message(json.get('msg'), date)
     db.session.commit()
 
 
@@ -70,17 +74,21 @@ def helper_result(json):
     면접 결과를 공지하는 채팅 봇
     '''
     room = json.get('room')
-    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H3.name, 'date': isoformat(kstnow()), 'result': json['result']}, room=json.get('room_id'))
+    date = kstnow()
+    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H3.name, 'date': isoformat(date), 'result': json['result']}, room=json.get('room_id'))
     db.session.add(Chat(room_id=json.get('room_id'), title=json.get('title'), msg=json.get('msg'), user_type=UserType.H3.name, result=json['result']))
     # 면접에 불합격인 사람은 룸상태를 "C" 혹은 "N"으로 변경한다.
     if json['result'] == False:
         if json.get('club').is_recruiting():
-            json['room'].status = RoomStatus.N.name
+            room.status=RoomStatus.N.name
+            room.update_room_message(json.get('msg'), date)
         else:    
-            json['room'].status = RoomStatus.C.name
+            room.status=RoomStatus.C.name
+            room.update_room_message(json.get('msg'), date)
     # 면접에 합격인 사람은 룸상태를 "R"로 변경한다.
     elif json['result'] == True:
-        json['room'].status = RoomStatus.R.name
+        room.status=RoomStatus.R.name
+        room.update_room_message(json.get('msg'), date)
     db.session.commit()
 
 
@@ -93,17 +101,20 @@ def helper_answer(json):
     면접 결과 응답해주는 채팅 봇
     '''
     room = json.get('room')
-    
-    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H4.name, 'date': isoformat(kstnow())}, room=json.get('room_id'))
+    date = kstnow()
+    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H4.name, 'date': isoformat(date)}, room=json.get('room_id'))
     db.session.add(Chat(room_id=json.get('room_id'), title=json.get('title'), msg=json.get('msg'), user_type=UserType.H4.name))
     if json.get('answer'):
         db.session.add(ClubMember(user_id=json.get('user_id'), club_id=json.get('club_id')))
-        json['room'].status = RoomStatus.C.name
+        room.status=RoomStatus.C.name
+        room.update_room_message(json.get('msg'), date, RoomStatus.name)
     else:
         if json.get('club').is_recruiting():
-            json['room'].status = RoomStatus.N.name
+            room.status=RoomStatus.N.name
+            room.update_room_message(json.get('msg'), date, RoomStatus.N.name)
         else:    
-            json['room'].status = RoomStatus.C.name
+            room.status=RoomStatus.C.name
+            room.update_room_message(json.get('msg'), date, RoomStatus.C.name)
     
     db.session.commit()
 
@@ -130,8 +141,11 @@ def event_join_room(json):
 @room_writed
 @send_alarm
 def event_send_chat(json):
-    emit('recv_chat', {'title': None, 'msg': json.get('msg'), 'user_type': json.get('user_type'), 'date': isoformat(kstnow())}, room=json.get('room_id')) 
+    room = json.get('room')
+    date = kstnow()
+    emit('recv_chat', {'title': None, 'msg': json.get('msg'), 'user_type': json.get('user_type'), 'date': isoformat(date)}, room=json.get('room_id')) 
     db.session.add(Chat(room_id=json.get('room_id'), msg=json.get('msg'), user_type=json.get('user_type')))
+    room.update_room_message(json.get('msg'), date)
     db.session.commit()
 
 
@@ -149,12 +163,16 @@ def event_leave_room(json):
 @room_writed
 @send_alarm
 def helper_cancel_applicant(json):
-    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H4.name, 'date': isoformat(kstnow())}, room=json.get('room_id'))
+    room = json.get('room')
+    date = kstnow()
+    emit('recv_chat', {'title': json.get('title'), 'msg': json.get('msg'), 'user_type': UserType.H4.name, 'date': isoformat(date)}, room=json.get('room_id'))
     db.session.add(Chat(room_id=json.get('room_id'), title=json.get('title'), msg=json.get('msg'), user_type=UserType.H4.name))
     if json['club'].is_recruiting():
-        json['room'].status = RoomStatus.N.name
+        room.status=RoomStatus.N.name
+        room.update_room_message(json.get('msg'), date)
     else:    
-        json['room'].status = RoomStatus.C.name
+        room.status=RoomStatus.C.name
+        room.update_room_message(json.get('msg'), date)
     db.session.commit()
 
 

@@ -12,11 +12,11 @@ from app import db
 from config import Config
 from datetime import datetime
 from datetime import timedelta
-from dotenv import load_dotenv
+from dotenv import find_dotenv
 import jwt
 import os
 import pytest
-load_dotenv()
+find_dotenv('ddyzd.env')
 
 
 def jwt_token(sub=1):
