@@ -1,11 +1,15 @@
 language: python
+
 python:
 - '3.8'
+
 before_install:
 - openssl aes-256-cbc -d 
 -in ddyzd-firebase-adminsdk.json.enc -out ddyzd-firebase-adminsdk.json -k $ENCODE_SECRET
+
 install:
 - pip install -r requirements.txt
 script:
+
 - mkdir logs
 - python -m pytest
