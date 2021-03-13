@@ -23,11 +23,14 @@ def handshake_jwt_required(fn):
     '''
     @wraps(fn)
     def wrapper():
+        device = None
         try:
             if request.args.get('token'):
                 token = request.args.get('token') 
+                device = 'desktop'
             else:
                 token = request.headers.get('Authorization')[7:]
+                device = 'mobile'
             payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms="HS256")
         except jwt.ExpiredSignatureError:
             return {"msg": "ExpiredSignatureError"}, 401
@@ -35,7 +38,7 @@ def handshake_jwt_required(fn):
             return {"msg": "Unauthorized Header"}, 401
         user = User.query.get_or_404(payload.get('sub'))
 
-        return fn(user)
+        return fn(user, device)
     return wrapper
     
 
@@ -74,12 +77,14 @@ def send_alarm(fn):
         room = json.get('room')
         #일반 유저가 메시지를 보낸 경우
         if json.get('user_type') == UserType.U.name:
-            send_user = room.user.name
+            send_user = room.user
+            sender = room.user.name
             recv_user = room.club.club_head[0].user
             user_type = 'C'
         #동아리장이 메시지를 보낸 경우
         else:
-            send_user = room.club.name
+            send_user = room.club.club_head[0].user
+            sender = room.club.name
             recv_user = room.user
             user_type = 'U'
 
@@ -92,15 +97,26 @@ def send_alarm(fn):
         
         # 채팅방에 join 하지 않은 경우 fcm과 알람을 보낸다.
         if not recv_user.is_in_room(room):
-            asyncio.run(fcm_alarm(sender=send_user, msg=msg, token=recv_user.device_token, 
+            asyncio.run(fcm_alarm(sender=sender, msg=msg, token=recv_user.device_token, 
                 room_id=room.id, user_type=user_type))
         # title: 보내는 사람 이름 혹은 보내는 동아리 이름
         # msg: 일반 유저인 경우 일반 메시지, 봇인 경우 제목을 전송
-        emit('alarm', {'room_id': str(json.get('room_id'))}, room=recv_user.session_id)
-
+        emit_alarm(send_user, recv_user, str(json.get('room_id')))
+        
         return fn(json)
     return wrapper
 
+
+def emit_alarm(send_user, recv_user, room_id):
+    if recv_user.mobile_session_id is not None:
+        emit('alarm', {'room_id': room_id}, room=recv_user.mobile_session_id)
+    if recv_user.desktop_session_id is not None:
+        emit('alarm', {'room_id': room_id}, room=recv_user.desktop_session_id)
+    if send_user.mobile_session_id is not None:
+        emit('alarm', {'room_id': room_id}, room=send_user.mobile_session_id)
+    if send_user.desktop_session_id is not None:
+        emit('alarm', {'room_id': room_id}, room=send_user.desktop_session_id)
+        
 
 def room_read(fn):
     '''

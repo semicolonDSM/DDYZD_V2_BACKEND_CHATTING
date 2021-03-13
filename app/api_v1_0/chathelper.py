@@ -121,9 +121,12 @@ def helper_answer(json):
 
 # 소켓 연결
 @handshake_jwt_required
-def connect(user):
+def connect(user, device):
     emit('response', {'msg': 'Socket Connect Successfully'}, namespace='/chat')
-    user.session_id = request.sid
+    if device == 'mobile':
+        user.mobile_session_id = request.sid
+    elif device == 'desktop':
+        user.desktop_session_id= request.sid
     db.session.commit()
 
 
