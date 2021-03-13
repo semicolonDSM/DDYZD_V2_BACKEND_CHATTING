@@ -97,16 +97,16 @@ class Room(db.Model):
 		    "roomid" : str(self.id),
 		    "id" : str(id),
 		    "name" : name,
-		    "image" : image,
-		    "lastdate" :  isoformat(self.last_date if self.last_date is not None else datetime(1,1,1,1,1,1,1)),
-		    "lastmessage" : self.last_message,
-            "isread": isread,
-            "status": self.status.name,
-            "index": index
-        }
+                "image" : image,
+                "lastdate" :  isoformat(self.last_date if self.last_date is not None else datetime(1,1,1,1,1,1,1)),
+                "lastmessage" : self.last_message,
+                "isread": isread,
+                "status": self.status.name,
+                "index": index
+            }
 
-    def __repr__(self):
-        return '<Room> {} {}'.format(self.club, self.user)
+        def __repr__(self):
+            return '<Room> {} {}'.format(self.club, self.user)
 
 
 class Chat(db.Model):
@@ -195,7 +195,8 @@ class User(db.Model):
     email = db.Column(db.String(50))
     device_token = db.Column(db.String(4096))
     bio = db.Column(db.String(256))
-    session_id = db.Column(db.String(256), nullable=True, default=False)
+    mobile_session_id = db.Column(db.String(256), nullable=True, default=None)
+    desktop_session_id = db.Column(db.String(255), nullable=True, default=None)
 
     rooms = db.relationship('Room', backref='user', lazy='dynamic')
     club_heads = db.relationship('ClubHead', backref='user')
@@ -274,8 +275,11 @@ class User(db.Model):
         return room.user_id == self.id
 
     def is_in_room(self, room):
-        room_list = rooms(sid=self.session_id, namespace='/chat')
-        return room.id in room_list
+        if room.id in rooms(sid=self.desktop_session_id, namespace='/chat'):
+            return True
+        if room.id in rooms(sid=self.mobile_session_id, namespace='/chat'):
+            return True
+        return False
 
     def __repr__(self):
         return '<User> {},{}'.format(self.name, self.gcn)
