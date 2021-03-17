@@ -328,7 +328,7 @@ def cancel_applicant_required(fn):
         if json.get('user_type') != 'C':
             return emit('error', error.Forbidden('You are not a head for the club'), namespace='/chat')
         # 동아리의 지원자가 아닌 경우
-        if not (user.is_applicant(club) or user.is_scheduled(club)):
+        if not (user.is_applicant(club) or user.is_scheduled(club) or user.is_resulted(club)):
             return emit('error', error.BadRequest('User is not applicant or scheduled'), namespace='/chat')
 
         json['title'], json['msg'] = get_cancel_applicant_message(user, club)
