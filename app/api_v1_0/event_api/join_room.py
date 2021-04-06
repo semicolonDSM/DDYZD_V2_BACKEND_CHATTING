@@ -1,5 +1,5 @@
-from app.decorator import room_token_required
-from app.decorator import room_read
+from app.decorator.room_token_required import room_token_required
+from app.decorator.room_read import room_read
 from flask_socketio import join_room
 from flask_socketio import emit
 

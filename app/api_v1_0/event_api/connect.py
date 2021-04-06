@@ -1,4 +1,4 @@
-from app.decorator import handshake_jwt_required
+from app.decorator.handshake_jwt_required import handshake_jwt_required
 from app import db
 from flask_socketio import emit
 from flask import request

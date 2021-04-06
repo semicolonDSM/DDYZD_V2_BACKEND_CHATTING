@@ -1,7 +1,7 @@
-from app.decorator import room_token_required
-from app.decorator import chat_message_required
-from app.decorator import room_writed
-from app.decorator import send_alarm
+from app.decorator.room_token_required import room_token_required
+from app.decorator.chat_required import chat_required
+from app.decorator.room_writed import room_writed
+from app.decorator.send_alarm import send_alarm
 from app.models import Chat
 from app.models import isoformat
 from app.models import kstnow
@@ -10,7 +10,7 @@ from flask_socketio import emit
 
 # 채팅 보내기
 @room_token_required
-@chat_message_required
+@chat_required
 @room_writed
 @send_alarm
 def event_send_chat(json):

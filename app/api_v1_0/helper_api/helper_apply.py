@@ -1,7 +1,7 @@
-from app.decorator import apply_message_required
-from app.decorator import room_token_required
-from app.decorator import room_writed
-from app.decorator import send_alarm
+from app.decorator.apply_required import apply_required
+from app.decorator.room_token_required import room_token_required
+from app.decorator.room_writed import room_writed
+from app.decorator.send_alarm import send_alarm
 from app.models import RoomStatus
 from app.models import UserType
 from app.models import Major
@@ -13,7 +13,7 @@ from flask_socketio import emit
 
 # 동아리 지원
 @room_token_required
-@apply_message_required
+@apply_required
 @room_writed
 @send_alarm
 def helper_apply(json):

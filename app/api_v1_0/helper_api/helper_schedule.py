@@ -1,7 +1,7 @@
-from app.decorator import schedule_information_required
-from app.decorator import room_token_required
-from app.decorator import room_writed
-from app.decorator import send_alarm
+from app.decorator.schedule_required import schedule_required
+from app.decorator.room_token_required import room_token_required
+from app.decorator.room_writed import room_writed
+from app.decorator.send_alarm import send_alarm
 from app.models import RoomStatus
 from app.models import UserType
 from app.models import Chat
@@ -12,7 +12,7 @@ from flask_socketio import emit
 
 # 면접 스케쥴 
 @room_token_required
-@schedule_information_required
+@schedule_required
 @room_writed
 @send_alarm
 def helper_schedule(json):
