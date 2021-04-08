@@ -1,4 +1,4 @@
-from app.models import FcmType
+from app.models.type import FcmType
 from app import error
 from config import Config
 from flask_socketio import emit

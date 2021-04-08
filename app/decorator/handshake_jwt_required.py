@@ -1,4 +1,4 @@
-from app.models import User
+from app.models.user import User
 from config import Config
 from flask_socketio import emit
 from functools import wraps

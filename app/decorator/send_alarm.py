@@ -1,5 +1,5 @@
-from app.models import UserType
-from app.models import FcmType
+from app.models.type import UserType
+from app.models.type import FcmType
 from app.fcm import fcm_alarm
 from config import Config
 from flask_socketio import emit
