@@ -22,13 +22,13 @@ def send_alarm(fn):
             send_user = room.user
             sender = room.user.name
             recv_user = room.club.club_head[0].user
-            user_type = 'C'
+            user_type = UserType.C.name
         #동아리장이 메시지를 보낸 경우
         else:
             send_user = room.club.club_head[0].user
             sender = room.club.name
             recv_user = room.user
-            user_type = 'U'
+            user_type = UserType.U.name
 
         # 일반 채팅 메시지인 경우
         if json.get('fcm_type') == FcmType.C.name:
