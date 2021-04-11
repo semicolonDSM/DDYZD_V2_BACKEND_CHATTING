@@ -1,4 +1,4 @@
-from test.conftest import room_token
+from conftest import room_token
 from app.models.chat import Room
 from app.models.user import User
 

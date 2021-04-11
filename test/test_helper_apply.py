@@ -1,4 +1,4 @@
-from test.conftest import room_token
+from conftest import room_token
 
 # 동아리 지원 테스트
 def test_helper_apply(db_setting, flask_websocket, flask_client, flask_app):
