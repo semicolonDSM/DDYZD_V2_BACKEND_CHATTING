@@ -82,6 +82,14 @@ class User(db.Model):
             return room_query.filter(Room.status!=RoomType.N.name).first() 
         return room_query.filter(Room.status!=RoomType.C.name).first()
 
+    def select_rooms(self):
+        rs = self.rooms.all()
+        rooms = []
+        for r in rs
+            if r.chats.offset(r.u_offset).count() != 0:
+                rooms.append(r)
+                
+        return rooms
 
     def is_club_member(self, club):
         '''
