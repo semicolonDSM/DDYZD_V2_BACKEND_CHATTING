@@ -85,10 +85,10 @@ class User(db.Model):
     def select_rooms(self):
         rs = self.rooms.all()
         rooms = []
-        for r in rs
+        for r in rs:
             if r.chats.offset(r.u_offset).count() != 0:
                 rooms.append(r)
-                
+
         return rooms
 
     def is_club_member(self, club):
