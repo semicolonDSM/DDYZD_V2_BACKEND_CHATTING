@@ -5,6 +5,7 @@ from app.fcm import fcm_alarm
 from config import Config
 from flask_socketio import emit
 from functools import wraps
+from app import error
 import jwt
 
     
