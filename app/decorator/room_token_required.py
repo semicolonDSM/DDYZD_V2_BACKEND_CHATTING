@@ -1,7 +1,6 @@
 from app.models.chat import Room
 from app.models.user import User
 from app.models.club import Club
-from app.fcm import fcm_alarm
 from config import Config
 from flask_socketio import emit
 from functools import wraps

@@ -1,6 +1,4 @@
 from app.models.type import RoomType
-from app.models.chat import Room
-from app.models.user import User
 from app.models.function import kstnow
 from app import db
 
@@ -32,6 +30,7 @@ class Club(db.Model):
         '''
         모든 동아리 신청자 반환하는 메서드
         '''
+        from app.models.chat import Room
         return Room.query.filter_by(club_id=self.id).filter(Room.status != RoomType.C.name).filter(Room.status != RoomType.N.name).all()
     
     def select_rooms(self):
@@ -74,6 +73,7 @@ class ClubMember(db.Model):
     club_id = db.Column(db.Integer, db.ForeignKey('club.id'))
 
     def __repr__(self):
+        from app.models.user import User
         return '<Application> {},{}'.format(User.query.get(self.user_id).name, Club.query.get(self.club_id).name)
 
 

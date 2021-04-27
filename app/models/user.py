@@ -1,5 +1,5 @@
+
 from app.models.type import RoomType
-from app.models.club import Room
 from app import db
 from flask_socketio import rooms
 
@@ -51,25 +51,23 @@ class User(db.Model):
         '''
         내 방이 applicant 상태인지 아는 에서드
         '''
+        from app.models.chat import Room
         room_query = Room.query.filter_by(user_id=self.id).filter_by(club_id=club.id)
-        from app import logger
-        logger.info("BES"+str(Room.query.all()[1].status))
         return room_query.filter(Room.status==RoomType.A.name).first()
 
     def is_scheduled(self, club):
         '''
         내 방이 scheduled 상태인지 아는 에서드
         '''
-        from app import logger
-        logger.info("BES: "+ str(Room.query.all()[1].status))
+        from app.models.chat import Room
         room_query = Room.query.filter_by(user_id=self.id).filter_by(club_id=club.id)
-        logger.info(room_query.filter(Room.status==RoomType.S.name).first())
         return room_query.filter(Room.status==RoomType.S.name).first()
 
     def is_resulted(self, club):
         '''
         내 방이 resulted 상태인지 아는 에서드
         '''
+        from app.models.chat import Room
         room_query = Room.query.filter_by(user_id=self.id).filter_by(club_id=club.id)        
         return room_query.filter(Room.status==RoomType.R.name).first()
 
@@ -77,6 +75,7 @@ class User(db.Model):
         '''
         내 방이 common 혹은 notified 상태인지 아는 메서드
         '''
+        from app.models.chat import Room
         room_query = Room.query.filter_by(user_id=self.id).filter_by(club_id=club.id)        
         if club.is_recruiting():
             return room_query.filter(Room.status!=RoomType.N.name).first() 
